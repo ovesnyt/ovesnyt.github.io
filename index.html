@@ -1,7 +1,39 @@
 <!DOCTYPE html>
 <html>
-<body>
-<p style="text-align:center"><span style="font-size:72px">Amount&nbsp;</span></p>
-<p style="text-align:center">I'm hosted with GitHub Pages.</p>
-</body>
+  <head>
+    <title>Moje stránka</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+      function handleClientLoad() {
+        gapi.load('client', initClient);
+      }
+
+      function initClient() {
+        gapi.client.init({
+          apiKey: 'VAŠE_API_KEY',
+          discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+          clientId: 'VAŠE_CLIENT_ID',
+          scope: 'https://www.googleapis.com/auth/spreadsheets.readonly'
+        }).then(function() {
+          getCellValue();
+        });
+      }
+
+      function getCellValue() {
+        gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: 'VAŠE_TABULKY_ID',
+          range: 'Sheet1!A1' // změňte "A1" na buňku, kterou chcete načíst
+        }).then(function(response) {
+          var value = response.result.values[0][0];
+          document.getElementById("value").innerHTML = value;
+        }, function(response) {
+          console.log('Chyba: ' + response.result.error.message);
+        });
+      }
+    </script>
+  </head>
+  <body onload="handleClientLoad()">
+    <div>Hodnota: <span id="value"></span></div>
+  </body>
 </html>
+
